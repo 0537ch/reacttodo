@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 
+
 function App() {
   const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState([]);
@@ -19,6 +20,22 @@ function App() {
     }
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
+
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingText, setEditingText] = useState("");
+
+    const startEdit = (index) => {
+    setEditingIndex(index);
+    setEditingText(tasks[index].text);
+  };
+
+  const saveEdit = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].text = editingText;
+    setTasks(updatedTasks);
+    setEditingIndex(null);
+    setEditingText("");
+  };
 
   const addTask = () => {
     if (newTask.trim() === "") return;
@@ -44,7 +61,17 @@ function App() {
       <h1>My To-Do List</h1>
 
       <TaskInput newTask={newTask} setNewTask={setNewTask} addTask={addTask} />
-      <TaskList tasks={tasks} toggleTask={toggleTask} deleteTask={deleteTask} />
+      <TaskList
+        tasks={tasks}
+        toggleTask={toggleTask}
+        deleteTask={deleteTask}
+        startEdit={startEdit}
+        saveEdit={saveEdit}
+        editingIndex={editingIndex}
+        editingText={editingText}
+        setEditingText={setEditingText}
+      />
+
     </div>
   );
 }
